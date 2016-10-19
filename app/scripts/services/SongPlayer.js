@@ -1,14 +1,17 @@
  (function() {
      function SongPlayer() {
           var SongPlayer = {};
-
+/**
+* @desc current song
+* @type {Object}
+*/
           var currentSong = null;
 
 /**
 * @desc Buzz object audio file
 * @type {Object}
 */
-          var currentBuzzObject = null;
+         var currentBuzzObject = null;
 
 
 /**
@@ -30,29 +33,55 @@
 		    currentSong = song;
 
 		 };
+ /**
+ * @function playSong
+ * @desc plays the song
+
+ */
+		var playSong = function () {
+		 	currentBuzzObject.play();
+		 	song.playing = true;
+		 };
+
+/**
+ * @function play songPlayer
+ * @desc plays song
+ * @param {Object} song
+ */	
 
 	    SongPlayer.play = function(song) {
 	     	if (currentSong !== song) {
-	     	setSong(song);
-	         currentBuzzObject.play(); 
-	         song.playing = true;
+	     		setSong(song);
+	         	playSong(song); 
 	         } else if (currentSong === song) {
 	     		if (currentBuzzObject.isPaused()) {
 	     			currentBuzzObject.play;
 	     		}
 	     	}   
 	     };
-
+/**
+ * @function pause songPlayer
+ * @desc pauses song
+ * @param {Object} song
+ */	
 	     
 		SongPlayer.pause = function(song) {
 		     currentBuzzObject.pause();
 		     song.playing = false;
 		 };
 
+
+
           return SongPlayer;
      };
  
+
+
      angular
          .module('blocJams')
          .factory('SongPlayer', SongPlayer);
+
  })();
+
+
+
