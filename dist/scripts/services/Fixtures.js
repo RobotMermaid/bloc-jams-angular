@@ -40,7 +40,7 @@
         Fixtures.getCollection = function (numberOfAlbums) {
             var albums = [];
             for (var i = 0; i < numberOfAlbums; i++) {
-                albums.push(albumPicasso);
+                albums.push(albumMarconi);
             }
             return albums;
         };
@@ -52,3 +52,4 @@
         .module('blocJams')
         .factory('Fixtures', Fixtures);
 })();
+
