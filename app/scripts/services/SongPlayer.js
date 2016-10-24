@@ -1,5 +1,5 @@
  (function() {
-     function SongPlayer(Fixtures) {
+     function SongPlayer($rootScope, Fixtures) {
 
           var SongPlayer = {};
           var currentAlbum = Fixtures.getAlbum();
@@ -28,7 +28,12 @@
 			        preload: true
 			    });
 
-			 
+			    currentBuzzObject.bind('timeupdate', function() {
+			    	$rootScope.$apply(function() {
+			    		SongPlayer.currentTime = currentBuzzObject.getTime();
+			    	});
+			    });
+
 		    SongPlayer.currentSong = song;
 
 		 };
@@ -41,25 +46,32 @@
 		var playSong = function(song) {
 		 	currentBuzzObject.play();
 		 	song.playing = true;
-
 		 };
 
-		 var getSongIndex = function(currentAlbum, song) {
-		 	return currentAlbum.songs.indexOf(song);
 
-		 };
 
 		 var stopSong = function(song) {
 		 	currentBuzzObject.stop();
 		 	song.playing = null;
-
 		 };
+
+		var getSongIndex = function(song) {
+		 	return currentAlbum.songs.indexOf(song);
+		 };
+
+
 
 		 /**
 * @desc current song
 * @type {Object}
 */
-          SongPlayer.currentSong = null;
+        SongPlayer.currentSong = null;
+
+          /**
+ * @desc Current playback time (in seconds) of currently playing song
+ * @type {Number}
+ */
+ 		SongPlayer.currentTime = null;
 
 /**
  * @function play songPlayer
@@ -92,19 +104,15 @@
 			song = song || SongPlayer.currentSong;
 		     currentBuzzObject.pause();
 		     song.playing = false;
-
 		 };
-
-          return SongPlayer;
-     };
+     
  
 		 SongPlayer.previous = function() {
 		 	var currentSoundIndex = getSongIndex(SongPlayer.currentSong);
 		 	currentSoundIndex--;
 
 		 	if(currentSoundIndex < 0) {
-		 		 currentBuzzObject.stop();
-		 		 SongPlayer.currentSong,playing = null;
+		 		 stopSong(SongPlayer.currentSong);
 		 	} else {
 		 		var song = currentAlbum.songs[currentSoundIndex];
 		 		setSong(song);
@@ -116,9 +124,8 @@
 		 	var currentSoundIndex = getSongIndex(SongPlayer.currentSong);
 		 	currentSoundIndex++;
 
-		 	if(currentSoundIndex > currentAlbum.songs.length) {
-		 		currentBuzzObject.stop();
-		 		SongPlayer.currentSong,playing = null;
+		 	if(currentSoundIndex > currentAlbum.songs.length-1) {
+		 		stopSong(SongPlayer.currentSong);
 		 	} else {
 		 		var song = currentAlbum.songs[currentSoundIndex];
 		 		setSong(song);
@@ -126,9 +133,22 @@
 		 	}
 		 };
 
+		 /**
+		 * @function setCurrentTime
+		 * @desc Set current time (in seconds) of currently playing song
+		 * @param {Number} time
+		 */
+		 SongPlayer.setCurrentTime = function(time) {
+		     if (currentBuzzObject) {
+		         currentBuzzObject.setTime(time);
+		     }
+		 };
+		 return SongPlayer;
+     };
+
      angular
          .module('blocJams')
-         .factory('SongPlayer', ['Fixtures', SongPlayer]);
+         .factory('SongPlayer', ['$rootScope', 'Fixtures', SongPlayer]);
 
  })();
 
